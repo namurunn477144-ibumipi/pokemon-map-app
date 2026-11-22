@@ -380,14 +380,15 @@
     .ex-stamp { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 900; color: #FFF; background: var(--correct); }
     .ex-stamp.yet { background: #C9C2B8; }
     /* タブレットなど ひろい がめん */
-    @media (min-width: 700px) {
-      #app { max-width: 620px; }
-      .quiz-buddy { max-width: 620px; }
-      .map-svg { max-height: 50vh; }
-    }
     /* 3Dの えもじ */
     .emo { display: inline-block; width: 1.2em; height: 1.2em; object-fit: contain; vertical-align: -0.25em; -webkit-user-drag: none; }
     .question-emoji .emo, .opt-emoji .emo { width: 1.1em; height: 1.1em; vertical-align: middle; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.12)); }
+    /* ---------- タブレットでは ぜんたいを おおきく（--z は がめんの おおきさから けいさん）---------- */
+    #app, .feedback-card, #evolve-overlay > *:not(.evo-rings) { zoom: var(--z, 1); }
+    #app, .view { min-height: calc(100vh / var(--z, 1)); }
+    @supports (height: 100dvh) { .view { min-height: calc(100dvh / var(--z, 1)); } }
+    .map-svg { max-height: calc(42vh / var(--z, 1)); }
+    .ex-map .map-svg { max-height: calc(52vh / var(--z, 1)); }
   </style>
 </head>
 <body>
@@ -457,6 +458,16 @@
   <button id="close-evolve-btn" class="btn btn-primary btn-large" style="width:80%; max-width:300px;">いっしょにあそぶ！</button>
 </div>
 <script>
+// タブレットでは がめんの おおきさに あわせて ぜんたいを おおきく する（スマホは そのまま）
+function fitZoom() {
+  const w = window.innerWidth, h = window.innerHeight;
+  let z = 1;
+  if (w >= 600) z = Math.min(w * 0.92 / 480, h / 790);
+  z = Math.max(1, Math.min(z, 1.9));
+  document.documentElement.style.setProperty('--z', z.toFixed(3));
+}
+fitZoom();
+window.addEventListener('resize', fitZoom);
 const eeveeEvolutions = [
   { id: 134, name: "シャワーズ" }, { id: 135, name: "サンダース" }, { id: 136, name: "ブースター" },
   { id: 196, name: "エーフィ" }, { id: 197, name: "ブラッキー" }, { id: 470, name: "リーフィア" },
